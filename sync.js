@@ -4,20 +4,20 @@ const debounce = require("debounce");
 
 const SYNC_DIR = process.env.SYNC_DIR;
 
-console.log("Starting syncing in dir: ", SYNC_DIR);
-initializeWatcher();
-
 function initializeWatcher() {
   chokidar
     .watch(SYNC_DIR, {
       ignoreInitial: true,
     })
-    .on("all", debounce(onChange, 1000));
+    .on("all", onChangeDebounced);
 }
 
 function onChange() {
-  run("git status");
+  run(`git add .`);
+  run(`git commit -m 'Updates notes on ${getReadableTimestamp()}'`);
+  run(`git push`);
 }
+const onChangeDebounced = debounce(onChange, 5000);
 
 function run(command) {
   exec(
@@ -36,3 +36,10 @@ function run(command) {
     }
   );
 }
+
+function getReadableTimestamp() {
+  return new Date().toISOString().replace(/T/, " ").replace(/\..+/, "");
+}
+
+console.log("Starting syncing in dir: ", SYNC_DIR);
+initializeWatcher();
