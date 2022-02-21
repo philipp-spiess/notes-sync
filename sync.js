@@ -17,7 +17,7 @@ function onChange() {
   run(`git commit -m 'Updates notes on ${getReadableTimestamp()}'`);
   run(`git push`);
 }
-const onChangeDebounced = debounce(onChange, 5000);
+const onChangeDebounced = debounce(onChange, 30000);
 
 function run(command) {
   exec(
