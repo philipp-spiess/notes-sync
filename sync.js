@@ -20,15 +20,19 @@ function onChange() {
 }
 
 function run(command) {
-  exec(command, { shell: "powershell.exe" }, (error, stdout, stderr) => {
-    if (error) {
-      console.error(error);
+  exec(
+    command,
+    { shell: "powershell.exe", cwd: SYNC_DIR },
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error(error);
+      }
+      if (stdout) {
+        console.log(stdout);
+      }
+      if (stderr) {
+        console.error(stderr);
+      }
     }
-    if (stdout) {
-      console.log(stdout);
-    }
-    if (stderr) {
-      console.error(stderr);
-    }
-  });
+  );
 }
