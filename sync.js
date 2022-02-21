@@ -1,10 +1,34 @@
+const { exec } = require("child_process");
 const chokidar = require("chokidar");
+const debounce = require("debounce");
 
-const WATCH_DIR = process.env.WATCH_DIR;
+const SYNC_DIR = process.env.SYNC_DIR;
 
-console.log("Starting watching on: ", WATCH_DIR);
+console.log("Starting syncing in dir: ", SYNC_DIR);
+initializeWatcher();
 
-// One-liner for current directory
-chokidar.watch(WATCH_DIR).on("all", (event, path) => {
-  console.log(event, path);
-});
+function initializeWatcher() {
+  chokidar
+    .watch(SYNC_DIR, {
+      ignoreInitial: true,
+    })
+    .on("all", debounce(onChange, 1000));
+}
+
+function onChange() {
+  run("git status");
+}
+
+function run(command) {
+  exec(command, { shell: "powershell.exe" }, (error, stdout, stderr) => {
+    if (error) {
+      console.error(error);
+    }
+    if (stdout) {
+      console.log(stdout);
+    }
+    if (stderr) {
+      console.error(stderr);
+    }
+  });
+}
