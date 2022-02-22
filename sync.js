@@ -9,15 +9,16 @@ function initializeWatcher() {
     .watch(SYNC_DIR, {
       ignoreInitial: true,
     })
-    .on("all", onChangeDebounced);
+    .on("all", onChange);
 }
 
-function onChange() {
-  run(`git add .`);
-  run(`git commit -m 'Updates notes on ${getReadableTimestamp()}'`);
-  run(`git push`);
+function onChange(event, path) {
+  console.log(event, path);
+
+  // run(`git add .`);
+  // run(`git commit -m 'Updates notes on ${getReadableTimestamp()}'`);
+  // run(`git push`);
 }
-const onChangeDebounced = debounce(onChange, 30000);
 
 function run(command) {
   exec(
